@@ -1,0 +1,7 @@
+.idea/
+.DS_Store
+
+backend/target/
+
+web-dashboard/node_modules/
+web-dashboard/dist/
