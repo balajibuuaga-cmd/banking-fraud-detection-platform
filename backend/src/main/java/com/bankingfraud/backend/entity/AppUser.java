@@ -24,4 +24,13 @@ public class AppUser {
     private String password;
 
     private String role;
+
+    private Boolean active;
+
+    @PrePersist
+    public void prePersist() {
+        if (active == null) {
+            active = true;
+        }
+    }
 }

@@ -62,6 +62,10 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
 
+        if (Boolean.FALSE.equals(user.getActive())) {
+            throw new RuntimeException("User account is inactive");
+        }
+
         String role = normalizeRole(user.getRole());
 
         String token =

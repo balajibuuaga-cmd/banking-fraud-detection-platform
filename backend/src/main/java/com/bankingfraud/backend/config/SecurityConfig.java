@@ -65,15 +65,18 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers("/api/fraud-rules/**").hasRole("ADMIN")
+                        .requestMatchers("/api/import/**").hasRole("ADMIN")
 
                         // Admin + Analyst
                         .requestMatchers("/api/transactions/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/accounts/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/fraud-alerts/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/fraud-cases/**").hasAnyRole("ADMIN", "ANALYST")
+                        .requestMatchers("/api/customer-360/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/audit-logs/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/audit-trail/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/analytics/**").hasAnyRole("ADMIN", "ANALYST")
+                        .requestMatchers("/api/copilot/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/investigation-assistant/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/high-risk-locations/**").hasAnyRole("ADMIN", "ANALYST")
                         .requestMatchers("/api/ai-explanations/**").hasAnyRole("ADMIN", "ANALYST")

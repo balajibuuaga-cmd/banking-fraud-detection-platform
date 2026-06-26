@@ -20,4 +20,9 @@ public class AuditLogController {
     public List<AuditLog> getAllLogs() {
         return auditLogRepository.findAll();
     }
+
+    @PostMapping
+    public AuditLog createLog(@RequestBody AuditLog auditLog) {
+        return auditLogRepository.save(auditLog);
+    }
 }
