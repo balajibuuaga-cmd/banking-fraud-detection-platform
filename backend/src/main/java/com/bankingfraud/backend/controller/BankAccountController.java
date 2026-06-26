@@ -36,4 +36,12 @@ public class BankAccountController {
     public List<BankAccount> getAccountsByCustomer(@PathVariable Long customerId) {
         return bankAccountService.getAccountsByCustomer(customerId);
     }
+
+    @PutMapping("/{id}/status")
+    public BankAccount updateAccountStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+
+        return bankAccountService.updateAccountStatus(id, status);
+    }
 }

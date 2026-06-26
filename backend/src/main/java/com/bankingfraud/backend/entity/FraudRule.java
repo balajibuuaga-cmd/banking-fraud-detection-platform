@@ -1,43 +1,41 @@
 package com.bankingfraud.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "fraud_alerts")
+@Table(name = "fraud_rules")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FraudAlert {
+public class FraudRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String alertType;
+    private String ruleName;
 
-    private String severity;
+    private String ruleType;
 
-    private String description;
+    private String conditionValue;
 
-    private String status;
+    private Integer riskPoints;
 
-    private Integer riskScore;
+    private Boolean active;
 
     private LocalDateTime createdAt;
-
-    @OneToOne
-    @JoinColumn(name = "transaction_id")
-    @JsonIgnore
-    private Transaction transaction;
 
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
+
+        if (active == null) {
+            active = true;
+        }
     }
 }

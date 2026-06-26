@@ -2,7 +2,7 @@ package com.bankingfraud.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,7 +35,7 @@ public class Transaction {
     private LocalDateTime transactionTime;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JsonIgnoreProperties({"transactions"})
     private BankAccount bankAccount;
 
     @PrePersist
@@ -48,4 +48,7 @@ public class Transaction {
 
     @Column(length = 2000)
     private String aiExplanation;
+
+    @Column(length = 1000)
+    private String recommendedAction;
 }

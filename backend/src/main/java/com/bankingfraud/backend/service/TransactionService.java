@@ -42,10 +42,16 @@ public class TransactionService {
         Transaction savedTransaction =
                 transactionRepository.save(analyzedTransaction);
 
+        if ("CRITICAL".equalsIgnoreCase(savedTransaction.getRiskLevel())) {
+            account.setStatus("LOCKED");
+            bankAccountRepository.save(account);
+            System.out.println("Account locked due to CRITICAL fraud risk: " + account.getAccountNumber());
+        }
+
         transactionProducer.publishTransaction(savedTransaction);
 
-        if ("HIGH".equals(savedTransaction.getRiskLevel())
-                || "CRITICAL".equals(savedTransaction.getRiskLevel())) {
+        if ("HIGH".equalsIgnoreCase(savedTransaction.getRiskLevel())
+                || "CRITICAL".equalsIgnoreCase(savedTransaction.getRiskLevel())) {
 
             fraudAlertService.generateAlert(savedTransaction);
         }

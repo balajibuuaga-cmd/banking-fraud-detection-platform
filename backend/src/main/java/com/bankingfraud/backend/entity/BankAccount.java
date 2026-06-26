@@ -1,9 +1,7 @@
 package com.bankingfraud.backend.entity;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,9 +31,11 @@ public class BankAccount {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @JsonIgnore
     private Customer customer;
 
     @OneToMany(mappedBy = "bankAccount")
+    @JsonIgnore
     private List<Transaction> transactions;
 
     @PrePersist

@@ -3,7 +3,7 @@ package com.bankingfraud.backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,6 +36,7 @@ public class Customer {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<BankAccount> bankAccounts;
 
     @PrePersist
@@ -43,3 +44,4 @@ public class Customer {
         createdAt = LocalDateTime.now();
     }
 }
+

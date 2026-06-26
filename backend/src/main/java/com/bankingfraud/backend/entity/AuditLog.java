@@ -32,4 +32,5 @@ public class AuditLog {
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
+
 }

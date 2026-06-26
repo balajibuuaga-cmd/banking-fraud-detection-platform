@@ -13,11 +13,16 @@ public class BankAccountService {
 
     private final BankAccountRepository bankAccountRepository;
     private final CustomerRepository customerRepository;
+    private final AuditLogService auditLogService;
 
-    public BankAccountService(BankAccountRepository bankAccountRepository,
-                              CustomerRepository customerRepository) {
+    public BankAccountService(
+            BankAccountRepository bankAccountRepository,
+            CustomerRepository customerRepository,
+            AuditLogService auditLogService) {
+
         this.bankAccountRepository = bankAccountRepository;
         this.customerRepository = customerRepository;
+        this.auditLogService = auditLogService;
     }
 
     public BankAccount createAccount(Long customerId, BankAccount bankAccount) {
@@ -44,5 +49,23 @@ public class BankAccountService {
     public BankAccount getAccountById(Long id) {
         return bankAccountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bank account not found"));
+    }
+
+    public BankAccount updateAccountStatus(Long id, String status) {
+        BankAccount account = bankAccountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bank account not found"));
+
+        account.setStatus(status);
+
+        BankAccount updated = bankAccountRepository.save(account);
+
+        auditLogService.logAction(
+                "ACCOUNT_" + status,
+                "Analyst",
+                "BankAccount",
+                updated.getId()
+        );
+
+        return updated;
     }
 }
