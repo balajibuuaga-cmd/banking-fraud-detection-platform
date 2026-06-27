@@ -7,7 +7,8 @@ import {
     Typography,
     Button,
     TextField,
-    MenuItem
+    MenuItem,
+    Chip
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import MainLayout from "../layouts/MainLayout";
@@ -54,6 +55,7 @@ export default function Alerts({ darkMode, setDarkMode, dateRange, setDateRange 
         return matchesSearch && matchesSeverity;
     });
     const selectedRows = filteredAlerts.filter((item) => selectedIds.includes(item.id));
+    const severityLabel = severity === "ALL" ? "alerts" : `${severity.toLowerCase()} alerts`;
 
     const getSelectionIds = (selectionModel) => {
         if (Array.isArray(selectionModel)) return selectionModel;
@@ -161,9 +163,21 @@ export default function Alerts({ darkMode, setDarkMode, dateRange, setDateRange 
                         <MenuItem value="LOW">Low</MenuItem>
                     </TextField>
                 </Stack>
+
+                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap mt={2}>
+                    <Chip
+                        label={`${filteredAlerts.length} ${severityLabel}`}
+                        color={severity === "CRITICAL" ? "error" : "primary"}
+                    />
+                    <Chip label={`${alerts.length} total alerts loaded`} variant="outlined" />
+                    <Chip label="Use the page controls below the table to see more rows" variant="outlined" />
+                    {selectedIds.length > 0 && (
+                        <Chip label={`${selectedIds.length} selected`} color="secondary" />
+                    )}
+                </Stack>
             </Paper>
 
-            <Paper sx={{ height: 560, borderRadius: 3 }}>
+            <Paper sx={{ height: 650, borderRadius: 3 }}>
                 <DataGrid
                     rows={filteredAlerts}
                     columns={[
@@ -216,10 +230,10 @@ export default function Alerts({ darkMode, setDarkMode, dateRange, setDateRange 
                             )
                         }
                     ]}
-                    pageSizeOptions={[5, 10, 25]}
+                    pageSizeOptions={[10, 25, 50, 100]}
                     initialState={{
                         pagination: {
-                            paginationModel: { pageSize: 10, page: 0 },
+                            paginationModel: { pageSize: 25, page: 0 },
                         },
                     }}
                     showToolbar
