@@ -16,6 +16,27 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const status = error.response?.status;
+
+        if ((status === 401 || status === 403) && localStorage.getItem("token")) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            localStorage.removeItem("fullName");
+
+            if (window.location.pathname !== "/") {
+                window.location.href = "/";
+            } else {
+                window.location.reload();
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 export const getSeverityStats = async () => {
     const response = await api.get("/analytics/severity");
     return response.data;

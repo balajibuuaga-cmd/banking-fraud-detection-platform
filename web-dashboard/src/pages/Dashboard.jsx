@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "@mui/material";
 import AnalyticsChart from "../components/AnalyticsChart";
 import FraudTrendChart from "../components/FraudTrendChart";
 import MainLayout from "../layouts/MainLayout";
@@ -37,6 +38,7 @@ export default function Dashboard({ user, darkMode, setDarkMode, dateRange, setD
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedSeverity, setSelectedSeverity] = useState("ALL");
     const [selectedCaseStatus, setSelectedCaseStatus] = useState("ALL");
+    const [dashboardError, setDashboardError] = useState("");
     const [alertPage, setAlertPage] = useState(1);
     const [casePage, setCasePage] = useState(1);
     const itemsPerPage = 5;
@@ -98,6 +100,21 @@ export default function Dashboard({ user, darkMode, setDarkMode, dateRange, setD
         if (logsResult.status === "fulfilled") {
             setAuditLogs(Array.isArray(logsResult.value) ? logsResult.value : []);
         }
+
+        const failedRequest = [
+            transactionResult,
+            alertResult,
+            severityResult,
+            caseResult,
+            accountResult,
+            logsResult
+        ].find((result) => result.status === "rejected");
+
+        setDashboardError(
+            failedRequest
+                ? "Dashboard data could not be loaded. Your session may have expired. Please log in again."
+                : ""
+        );
     };
 
     useEffect(() => {
@@ -311,6 +328,12 @@ export default function Dashboard({ user, darkMode, setDarkMode, dateRange, setD
             setDateRange={setDateRange}
             onRefresh={loadDashboard}
         >
+                {dashboardError && (
+                    <Alert severity="warning" sx={{ mx: 3, mt: 2 }}>
+                        {dashboardError}
+                    </Alert>
+                )}
+
                 <section className="kpi-row">
                     <button className="metric-card kpi-button" onClick={() => navigate("/transactions")}>
                         <span>Total Transactions</span>
