@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -37,7 +38,17 @@ public class SecurityConfig {
 
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:5173"));
+                    String allowedOrigins = System.getenv().getOrDefault(
+                            "FRONTEND_ALLOWED_ORIGINS",
+                            "http://localhost:5173"
+                    );
+
+                    config.setAllowedOrigins(
+                            Arrays.stream(allowedOrigins.split(","))
+                                    .map(String::trim)
+                                    .filter(origin -> !origin.isBlank())
+                                    .toList()
+                    );
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
                     config.setExposedHeaders(List.of("Authorization"));
