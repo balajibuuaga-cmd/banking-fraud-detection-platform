@@ -8,7 +8,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/import")
-@CrossOrigin(origins = "http://localhost:5173")
 public class DatasetImportController {
 
     private final DatasetImportService datasetImportService;

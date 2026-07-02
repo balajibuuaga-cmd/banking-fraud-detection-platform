@@ -8,7 +8,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/fraud-rules")
-@CrossOrigin(origins = "http://localhost:5173")
 public class FraudRuleController {
 
     private final FraudRuleService fraudRuleService;

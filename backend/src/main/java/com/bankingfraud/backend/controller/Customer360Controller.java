@@ -18,7 +18,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/customer-360")
-@CrossOrigin(origins = "http://localhost:5173")
 public class Customer360Controller {
 
     private final CustomerRepository customerRepository;

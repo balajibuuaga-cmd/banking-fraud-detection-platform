@@ -9,7 +9,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/fraud-cases")
-@CrossOrigin(origins = "http://localhost:5173")
 public class FraudCaseController {
 
     private final FraudCaseService fraudCaseService;
@@ -84,5 +83,4 @@ public class FraudCaseController {
         return fraudCaseService.updateAssignedAnalyst(id, analyst);
     }
 }
-
 
