@@ -4,8 +4,10 @@ import com.bankingfraud.backend.dto.AuthResponse;
 import com.bankingfraud.backend.dto.LoginRequest;
 import com.bankingfraud.backend.dto.RegisterRequest;
 import com.bankingfraud.backend.entity.AppUser;
+import com.bankingfraud.backend.exception.ApplicationException;
 import com.bankingfraud.backend.repository.AppUserRepository;
 import com.bankingfraud.backend.security.JwtUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +31,17 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
+        String email = normalizeEmail(request.getEmail());
+
+        if (appUserRepository.findByEmail(email).isPresent()) {
+            throw new ApplicationException(HttpStatus.CONFLICT, "Email is already registered");
+        }
+
         String role = normalizeRole(request.getRole());
 
         AppUser user = AppUser.builder()
                 .fullName(request.getFullName())
-                .email(request.getEmail())
+                .email(email)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(role)
                 .build();
@@ -52,18 +60,19 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        String email = normalizeEmail(request.getEmail());
 
         AppUser user =
-                appUserRepository.findByEmail(request.getEmail())
+                appUserRepository.findByEmail(email)
                         .orElseThrow(() ->
-                                new RuntimeException("User not found"));
+                                new ApplicationException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
         if (!passwordMatches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
         if (Boolean.FALSE.equals(user.getActive())) {
-            throw new RuntimeException("User account is inactive");
+            throw new ApplicationException(HttpStatus.FORBIDDEN, "User account is inactive");
         }
 
         String role = normalizeRole(user.getRole());
@@ -104,5 +113,13 @@ public class AuthService {
         }
 
         return normalizedRole;
+    }
+
+    private String normalizeEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Email is required");
+        }
+
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 }
