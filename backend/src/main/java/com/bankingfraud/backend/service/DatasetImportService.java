@@ -21,7 +21,8 @@ import java.util.Map;
 @Service
 public class DatasetImportService {
 
-    private static final int MAX_IMPORT_ROWS = 1000;
+    private static final int DEFAULT_IMPORT_ROWS = 1000;
+    private static final int MAX_IMPORT_ROWS = 10000;
 
     private final CustomerRepository customerRepository;
     private final BankAccountRepository bankAccountRepository;
@@ -37,9 +38,13 @@ public class DatasetImportService {
         this.transactionService = transactionService;
     }
 
-    public Map<String, Object> importPaySimCsv(MultipartFile file) throws Exception {
+    public Map<String, Object> importPaySimCsv(MultipartFile file, int skipRows, int rowLimit)
+            throws Exception {
+        int normalizedSkipRows = Math.max(0, skipRows);
+        int normalizedRowLimit = Math.max(1, Math.min(rowLimit, MAX_IMPORT_ROWS));
         int imported = 0;
         int failed = 0;
+        int processed = 0;
 
         Map<String, BankAccount> accountCache = new HashMap<>();
 
@@ -54,7 +59,11 @@ public class DatasetImportService {
                         .parse(reader)
         ) {
             for (CSVRecord record : csvParser) {
-                if (imported >= MAX_IMPORT_ROWS) {
+                if (processed++ < normalizedSkipRows) {
+                    continue;
+                }
+
+                if (imported >= normalizedRowLimit) {
                     break;
                 }
 
@@ -90,9 +99,15 @@ public class DatasetImportService {
         result.put("importedRows", imported);
         result.put("failedRows", failed);
         result.put("source", "PaySim CSV");
-        result.put("rowLimit", MAX_IMPORT_ROWS);
+        result.put("skippedRows", normalizedSkipRows);
+        result.put("rowLimit", normalizedRowLimit);
+        result.put("maxRowLimit", MAX_IMPORT_ROWS);
 
         return result;
+    }
+
+    public Map<String, Object> importPaySimCsv(MultipartFile file) throws Exception {
+        return importPaySimCsv(file, 0, DEFAULT_IMPORT_ROWS);
     }
 
     private BankAccount findOrCreateCustomerAndAccount(String accountNumber) {

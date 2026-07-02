@@ -18,9 +18,12 @@ public class DatasetImportController {
     }
 
     @PostMapping("/paysim")
-    public Map<String, Object> importPaySim(@RequestParam("file") MultipartFile file)
+    public Map<String, Object> importPaySim(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(defaultValue = "0") int skipRows,
+            @RequestParam(defaultValue = "1000") int rowLimit)
             throws Exception {
 
-        return datasetImportService.importPaySimCsv(file);
+        return datasetImportService.importPaySimCsv(file, skipRows, rowLimit);
     }
 }
